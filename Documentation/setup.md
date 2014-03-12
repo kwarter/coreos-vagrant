@@ -1,8 +1,11 @@
-# How to setup stuff
+# Summary
+Set up a working demo with 3 VMs, coreos and fleet
 
 ## Get etcd working on the 3 nodes
-
+stop etcd on all machines since it's not setup properly
+```
 sudo systemctl stop etcd
+```
 core1
 ```
 /usr/bin/etcd -name 1 -peer-addr 192.168.2.101:7001 -addr 192.168.2.101:4001 
@@ -21,6 +24,7 @@ Questions:
 
 
 ## Get the container deployed to each node via systemd unit file
+On core1
 ```
 sudo vi /media/state/units/docker-base.service
 ```
@@ -35,27 +39,36 @@ ExecStart=/bin/bash -c '/usr/bin/docker start -a tony-container || /usr/bin/dock
 ExecStop=/usr/bin/docker stop tony-container
 ```
 
-Do this one time only on your host machine (mac), when you first do this because you will need to setup fleetctl tunneling. 
-
-vagrant ssh-config  core1 >> ~/.ssh/config
-varant ssh-config  core2 >> ~/.ssh/config
-vagrant ssh-config  core3 >> ~/.ssh/config
-
 
 ## Fleet
 ### Configuration
 On all nodes
 https://github.com/coreos/fleet/blob/master/Documentation/configuration.md
+core1
 ```
 vi fleet.conf
 ```
 ```
 public_ip=192.168.2.101
 ```
+core2
+```
+vi fleet.conf
+```
+```
+public_ip=192.168.2.102
+```
+core3
+```
+vi fleet.conf
+```
+```
+public_ip=192.168.2.103
+```
 
 ### SSH keys
 
-setup a ssh distribute script
+setup a ssh distribute script. you will need this so that fleet can do things on other boxes
 
 ```
 vi fleetctl-inject-ssh.sh
@@ -77,10 +90,12 @@ done
 
 
 ```
+Execute
+```
 chmod +x fleetctl-inject-ssh.sh
-
 ssh-keygen -q -t rsa -f ~/.ssh/id_rsa -N ""
-
+cat ~/.ssh/id_rsa.pub | ./fleetctl-inject-ssh.sh core
+```
 
 
 
@@ -89,8 +104,15 @@ ssh-keygen -q -t rsa -f ~/.ssh/id_rsa -N ""
 fleet --config fleet.conf &
 fleetctl list-machines
 ```
+on core1
+```
+fleetctl start /media/state/units/docker-base.service
+```
 
-
-on one node
-	fleetctl start docker-base.service
-
+## Optional
+If you want to ssh directly to your VMs via name, do this once on your mac
+```
+vagrant ssh-config  core1 >> ~/.ssh/config
+varant ssh-config  core2 >> ~/.ssh/config
+vagrant ssh-config  core3 >> ~/.ssh/config
+```
