@@ -23,4 +23,27 @@ Vagrant.configure("2") do |config|
   if Vagrant.has_plugin?("vagrant-vbguest") then
     config.vbguest.auto_update = false
   end
+
+  config.vm.define "core1" do |config|
+    config.vm.hostname = "core1"
+    config.vm.network "forwarded_port", guest: 8080, host: 8080
+    config.vm.network "forwarded_port", guest: 8082, host: 8081
+    config.vm.network "forwarded_port", guest: 40022, host: 40022
+    config.vm.network :private_network, ip: "192.168.2.101" ,
+       virtualbox__intnet: true
+  end
+
+  config.vm.define "core2" do |config|
+    config.vm.hostname = "core2"
+    config.vm.network :private_network, ip: "192.168.2.102",
+       virtualbox__intnet: true
+  end
+
+  config.vm.define "core3" do |config|
+    config.vm.hostname = "core3"
+    config.vm.network :private_network, ip: "192.168.2.103",
+       virtualbox__intnet: true
+  end
+
+
 end
