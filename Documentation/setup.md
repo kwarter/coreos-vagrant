@@ -19,11 +19,12 @@ core3
 /usr/bin/etcd -name 3 -peer-addr 192.168.2.103:7001 -addr 192.168.2.103:4001 -peers=192.168.2.102:7001
 ```
 Questions: 
-		How do I distribute the discovery initially and get the peers to undestand each other?
+		How do I distribute the discovery initially and get the peers to know about each other?
 
 
 
 ## Get the container deployed to each node via systemd unit file
+
 On core1
 ```
 sudo vi /media/state/units/docker-base.service
@@ -44,6 +45,7 @@ ExecStop=/usr/bin/docker stop tony-container
 ### Configuration
 On all nodes
 https://github.com/coreos/fleet/blob/master/Documentation/configuration.md
+
 core1
 ```
 vi fleet.conf
@@ -99,15 +101,39 @@ cat ~/.ssh/id_rsa.pub | ./fleetctl-inject-ssh.sh core
 
 
 
-### Start fleet
+### Start fleet on all machines
+Configure your own fleet unit because coreos has RO mounts
+(ie /usr/lib64/systemd/system/fleet.service)
+``` 
+sudo vi /media/state/units/fleet2.service
 ```
-fleet --config fleet.conf &
-fleetctl list-machines
 ```
+[Unit]
+Description=fleet
+
+[Service]
+ExecStart=/usr/bin/fleet --config /home/core/fleet.conf
+
+[Install]
+WantedBy=multi-user.target
+
+```
+
+```
+sudo systemctl link --runtime /media/state/units/fleet2.service
+```
+```
+sudo systemctl start fleet2.service
+```
+
+Verify by running `fleetctl list-machines`
+
 on core1
 ```
 fleetctl start /media/state/units/docker-base.service
 ```
+
+verify by running `fleetctl status docker-base.service`
 
 ## Optional
 If you want to ssh directly to your VMs via name, do this once on your mac
