@@ -4,16 +4,18 @@
 http://coreos.com/docs/running-coreos/cloud-providers/ec2/
 
 or
+
 For us-west-2
 https://console.aws.amazon.com/cloudformation/home?region=us-west-2#cstack=sn%7ECoreOS-alpha%7Cturl%7Ehttps://s3.amazonaws.com/coreos.com/dist/aws/coreos-alpha.template
 
 #### parameters
 
 *Discovery URL* should be the value you get from https://discovery.etcd.io/new
+
 *KeyPair* Should be the name of your KeyPair in aws
 
 ### Verify
-At this point, etcd, ssh keys, and fleet should all be good. You can check by running `fleetctl list-machines`
+At this point, etcd, ssh keys, and fleet should all be good. SSH into any machine using the *core* user. You can then verify by running `fleetctl list-machines`
 
 #### Create the test service file
 
