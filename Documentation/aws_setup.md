@@ -1,5 +1,17 @@
 # Setting up a test in AWS using Cloudformation
 
+# automatic way
+../provision_coreos_stack.sh
+
+#### ssh in and start the fleet service
+
+fleetctl start /media/state/units/docker-base.1.service
+
+fleetctl start /media/state/units/docker-base.2.service
+
+fleetctl start /media/state/units/docker-base.3.service
+
+# Manual way
 ### Create the stack
 http://coreos.com/docs/running-coreos/cloud-providers/ec2/
 
@@ -38,11 +50,11 @@ X-Conflicts=docker-base.*.service
 ```
 Then run
 ```
-fleetctl start /media/state/units/docker-base.service
+fleetctl start /media/state/units/docker-base.1.service
 ```
 
 Verify by running
 ```
-fleetctl status docker-base.service
+fleetctl status docker-base.1.service
 ```
 

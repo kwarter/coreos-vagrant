@@ -1,0 +1,29 @@
+---
+
+- name: provision coreOS AWS stack
+
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  tasks:
+
+  - name: Generate discovery url TOKEN
+    command: curl https://discovery.etcd.io/new
+    register: etcd_discovery_url
+
+  - name: create userdata for coreos
+    raw: "cat ./cloudformation/user-data.sh"
+    register: coreos_userdata_script
+
+  - name: create the coreOS stack
+    cloudformation: >
+      stack_name=coreos state=present
+      region=us-west-2 disable_rollback=true
+      template=cloudformation/coreos.json
+    args:
+      template_parameters:
+        DiscoveryURL: "{{ etcd_discovery_url.stdout }}"
+        KeyPair: kwarter-aws-us-west2
+        CoreOSUserDataScript: "{{ coreos_userdata_script.stdout }}"
+
+
