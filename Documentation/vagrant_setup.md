@@ -27,7 +27,7 @@ Questions:
 
 On core1
 ```
-sudo vi /media/state/units/docker-base.service
+sudo vi /media/state/units/docker-base.1.service
 ```
 ```
 [Unit]
@@ -38,6 +38,9 @@ Requires=docker.service
 [Service]
 ExecStart=/bin/bash -c '/usr/bin/docker start -a tony-container || /usr/bin/docker run -p 40022:22 -p 8081:8081 --expose=[22,8081] --name=tony-container monstaloc/docker-base /usr/sbin/sshd -D'
 ExecStop=/usr/bin/docker stop tony-container
+
+[X-Fleet]
+X-Conflicts=docker-base.*.service
 ```
 
 
