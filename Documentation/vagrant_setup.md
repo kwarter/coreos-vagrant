@@ -133,10 +133,10 @@ Verify by running `fleetctl list-machines`
 
 on core1
 ```
-fleetctl start /media/state/units/docker-base.service
+fleetctl start /media/state/units/docker-base.1.service
 ```
 
-verify by running `fleetctl status docker-base.service`
+verify by running `fleetctl status docker-base.1.service`
 
 ## Optional
 If you want to ssh directly to your VMs via name, do this once on your mac
